@@ -4,13 +4,12 @@ import ddangme.springdatajpa.dto.MemberDTO;
 import ddangme.springdatajpa.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
+import javax.persistence.LockModeType;
 import javax.persistence.NamedEntityGraph;
+import javax.persistence.QueryHint;
 import java.util.List;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
@@ -59,4 +58,13 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @EntityGraph("Member.all")
     @Query("SELECT m FROM Member m")
     List<Member> findMemberEntityGraph2();
+
+    @QueryHints(value = @QueryHint(name = "org.hibernate.readOnly", value = "true"))
+    Member findReadOnlyByUsername(String username);
+
+    @QueryHints(value = {@QueryHint(name = "org.hibernate.readOnly", value = "true")}, forCounting = true)
+    Page<Member> findByUsername(String name, Pageable pageable);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    List<Member> findLockByUsername(String name);
 }
