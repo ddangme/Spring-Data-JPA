@@ -2,6 +2,8 @@ package ddangme.springdatajpa.repository;
 
 import ddangme.springdatajpa.dto.MemberDTO;
 import ddangme.springdatajpa.entity.Member;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,4 +29,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query("SELECT m FROM Member m WHERE m.username in :names")
     List<Member> findByNames(@Param("names") List<String> names);
+
+    Page<Member> findByAge(int age, Pageable pageable);
 }
